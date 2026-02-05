@@ -1,43 +1,144 @@
+:root{ --seat: 42px; }
 
-    :root{
-      --seat: 42px;
-    }
-    .seat-grid{
-      display: grid;
-      grid-template-columns: repeat(5, var(--seat));
-      gap: 10px;
-      justify-content: start;
-      align-items: center;
-    }
-    .seat{
-      width: var(--seat);
-      height: var(--seat);
-      border-radius: 12px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight: 700;
-      cursor: pointer;
-      user-select: none;
-      border: 1px solid rgba(0,0,0,.15);
-      background: rgba(13,110,253,.07);
-    }
-    .seat:hover{ transform: translateY(-1px); }
-    .seat.selected{
-      background: rgba(25,135,84,.18);
-      border-color: rgba(25,135,84,.6);
-    }
-    .seat.booked{
-      background: rgba(220,53,69,.14);
-      border-color: rgba(220,53,69,.5);
-      cursor: not-allowed;
-      opacity: .9;
-    }
-    .aisle{
-      width: var(--seat);
-      height: var(--seat);
-      border-radius: 12px;
-      border: 1px dashed rgba(0,0,0,.15);
-      opacity: .35;
-    }
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+/* Seat grid */
+.seat-grid{
+  display: grid;
+  grid-template-columns: repeat(5, var(--seat));
+  gap: 10px;
+  justify-content: start;
+  align-items: center;
+}
+.seat{
+  width: var(--seat);
+  height: var(--seat);
+  border-radius: 12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid rgba(0,0,0,.15);
+  background: rgba(13,110,253,.07);
+  transition: transform .08s ease, box-shadow .12s ease;
+}
+.seat:hover{ transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+.seat.selected{ background: rgba(25,135,84,.18); border-color: rgba(25,135,84,.6); }
+.seat.booked{ background: rgba(220,53,69,.14); border-color: rgba(220,53,69,.5); cursor: not-allowed; opacity: .9; }
+.aisle{
+  width: var(--seat);
+  height: var(--seat);
+  border-radius: 12px;
+  border: 1px dashed rgba(0,0,0,.15);
+  opacity: .35;
+}
+.mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace; }
+
+/* Bus list */
+.bus-list{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 576px){ .bus-list{ grid-template-columns: 1fr; } }
+.bus-card{
+  text-align: left;
+  width: 100%;
+  border: 1px solid rgba(0,0,0,.12);
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255,255,255,.65);
+  backdrop-filter: blur(6px);
+  transition: transform .10s ease, box-shadow .12s ease, border-color .12s ease;
+}
+[data-bs-theme="dark"] .bus-card{ background: rgba(0,0,0,.12); border-color: rgba(255,255,255,.12); }
+.bus-card:hover{ transform: translateY(-1px); box-shadow: 0 10px 30px rgba(0,0,0,.10); }
+.bus-card.active{ border-color: rgba(13,110,253,.55); box-shadow: 0 12px 34px rgba(13,110,253,.12); }
+
+/* readable badges */
+.bus-badge{
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(13,110,253,.06);
+  color: #0d6efd;
+  font-weight: 700;
+}
+[data-bs-theme="dark"] .bus-badge{
+  border-color: rgba(255,255,255,.14);
+  background: rgba(13,110,253,.18);
+  color: #9ec5fe;
+}
+
+.bus-time-pill{
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(13,110,253,.10);
+  color: #0b5ed7;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: .25rem .5rem;
+  margin-right: .25rem;
+  margin-bottom: .25rem;
+  display: inline-block;
+}
+[data-bs-theme="dark"] .bus-time-pill{
+  border-color: rgba(255,255,255,.14);
+  background: rgba(13,110,253,.22);
+  color: #cfe2ff;
+}
+
+.bus-fare-pill{
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(25,135,84,.10);
+  color: #146c43;
+  font-weight: 800;
+}
+[data-bs-theme="dark"] .bus-fare-pill{
+  border-color: rgba(255,255,255,.14);
+  background: rgba(25,135,84,.22);
+  color: #b7f5d0;
+}
+.bus-base-pill{
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(108,117,125,.10);
+  color: #495057;
+  font-weight: 800;
+}
+[data-bs-theme="dark"] .bus-base-pill{
+  border-color: rgba(255,255,255,.14);
+  background: rgba(108,117,125,.18);
+  color: #e9ecef;
+}
+
+.bus-check{
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 900;
+  border: 1px solid rgba(0,0,0,.12);
+  opacity: 0;
+  transform: scale(.9);
+  transition: opacity .12s ease, transform .12s ease;
+}
+.bus-check.show{ opacity: 1; transform: scale(1); }
+
+/* Ticket notch effect */
+.ticket{ position: relative; }
+.ticket:before, .ticket:after{
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--bs-body-bg);
+  top: 54px;
+  border: 1px solid rgba(0,0,0,.08);
+}
+.ticket:before{ left: -9px; }
+.ticket:after{ right: -9px; }
+
+/* Print */
+@media print {
+  .no-print { display: none !important; }
+}
