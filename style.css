@@ -1,53 +1,55 @@
-/* ========= Theme (no toggle; explicit light/dark) ========= */
-:root{
-  --bg: #f5f6f8;
-  --card: rgba(255,255,255,.85);
-  --text: #111827;
-  --muted: #6b7280;
-  --border: rgba(17,24,39,.12);
-  --seat: 42px;
-}
-html[data-theme="dark"]{
-  --bg: #0b1220;
-  --card: rgba(17,24,39,.55);
-  --text: #e5e7eb;
-  --muted: #9ca3af;
-  --border: rgba(229,231,235,.16);
-}
-body{
-  background: var(--bg);
-  color: var(--text);
-}
-.app-navbar{
-  background: var(--card);
-  backdrop-filter: blur(10px);
-}
-.card-soft{
-  background: var(--card);
-  border: 1px solid var(--border) !important;
-}
-.text-muted{ color: var(--muted) !important; }
+:root{ --seat: 42px; }
 .mono{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
 }
 
-/* ========= Results card ========= */
-.result-card{
-  border: 1px solid var(--border);
-  background: var(--card);
-  border-radius: 18px;
-  padding: 14px;
+/* Filters */
+.filter-scroll{
+  max-height: 180px;
+  overflow: auto;
+  padding-right: 6px;
 }
-.result-card:hover{
-  box-shadow: 0 14px 36px rgba(0,0,0,.12);
+.filter-scroll::-webkit-scrollbar{ width: 6px; }
+.filter-scroll::-webkit-scrollbar-thumb{ background: rgba(0,0,0,.18); border-radius: 999px; }
+
+.filter-pill.active{
+  border-color: rgba(13,110,253,.6) !important;
+  background: rgba(13,110,253,.12) !important;
 }
 
-/* ========= Seat grid ========= */
+/* Results card */
+.result-card{
+  border: 1px solid rgba(0,0,0,.10);
+  border-radius: 18px;
+  padding: 14px;
+  background: rgba(255,255,255,.70);
+  transition: transform .10s ease, box-shadow .12s ease, border-color .12s ease;
+}
+[data-bs-theme="dark"] .result-card{
+  background: rgba(0,0,0,.14);
+  border-color: rgba(255,255,255,.12);
+}
+.result-card:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 12px 34px rgba(0,0,0,.10);
+  border-color: rgba(13,110,253,.35);
+}
+.amenity{
+  border: 1px solid rgba(0,0,0,.12);
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+[data-bs-theme="dark"] .amenity{ border-color: rgba(255,255,255,.16); }
+.price-tag{ font-size: 18px; font-weight: 900; }
+
+/* Seat grid */
 .seat-grid{
-  display:grid;
+  display: grid;
   grid-template-columns: repeat(5, var(--seat));
   gap: 10px;
   justify-content: start;
+  align-items: center;
 }
 .seat{
   width: var(--seat);
@@ -56,34 +58,40 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  user-select:none;
-  cursor:pointer;
-  border: 1px solid var(--border);
-  background: rgba(13,110,253,.10);
-  font-weight: 800;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid rgba(0,0,0,.15);
+  background: rgba(13,110,253,.07);
+  transition: transform .08s ease, box-shadow .12s ease;
 }
-.seat:hover{ transform: translateY(-1px); }
-.seat.selected{
-  background: rgba(25,135,84,.25);
-  border-color: rgba(25,135,84,.6);
-}
-.seat.booked{
-  background: rgba(220,53,69,.22);
-  border-color: rgba(220,53,69,.55);
-  cursor:not-allowed;
-  opacity: .85;
-}
+.seat:hover{ transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+.seat.selected{ background: rgba(25,135,84,.18); border-color: rgba(25,135,84,.6); }
+.seat.booked{ background: rgba(220,53,69,.14); border-color: rgba(220,53,69,.5); cursor: not-allowed; opacity: .9; }
 .aisle{
   width: var(--seat);
   height: var(--seat);
   border-radius: 12px;
-  border: 1px dashed var(--border);
-  opacity:.35;
+  border: 1px dashed rgba(0,0,0,.15);
+  opacity: .35;
 }
 
-/* ========= Mobile ========= */
-@media (max-width: 575.98px){
-  :root{ --seat: 36px; }
-  .result-card{ padding: 12px; }
-  .seat-grid{ gap: 8px; }
+/* Ticket */
+.ticket{ position: relative; }
+.ticket:before, .ticket:after{
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--bs-body-bg);
+  top: 54px;
+  border: 1px solid rgba(0,0,0,.08);
 }
+.ticket:before{ left: -9px; }
+.ticket:after{ right: -9px; }
+
+/* Expand blocks */
+.kv{ display:flex; justify-content:space-between; gap:12px; }
+.kv .k{ color: var(--bs-secondary-color); font-weight: 700; }
+.kv .v{ font-weight: 800; text-align:right; }

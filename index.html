@@ -1,231 +1,522 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-bs-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BD Bus Ticketing (Demo)</title>
+  <title>BD Bus Ticket </title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="./style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 
-<body>
-<button id="btnLight" class="btn btn-outline-secondary btn-sm">Light</button>
-<button id="btnDark" class="btn btn-dark btn-sm">Dark</button>
-
-  <nav class="navbar navbar-expand-lg border-bottom sticky-top app-navbar">
+<body class="bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg bg-body border-bottom sticky-top">
     <div class="container">
       <a class="navbar-brand fw-bold" href="#/search">BD Bus Ticket</a>
 
       <div class="ms-auto d-flex gap-2 align-items-center">
         <a class="btn btn-outline-primary btn-sm" href="#/search">Search</a>
-        <a class="btn btn-outline-secondary btn-sm" href="#/admin">Admin</a>
+        <a class="btn btn-outline-dark btn-sm" href="#/admin">Admin</a>
+        <button id="themeBtn" class="btn btn-outline-secondary btn-sm">Toggle Theme</button>
 
-        <!-- Dark/Light mode (explicit) -->
-        <select id="themeSelect" class="form-select form-select-sm w-auto">
-          <option value="light">Light mode</option>
-          <option value="dark">Dark mode</option>
-        </select>
+        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBookings">
+          My Bookings
+        </button>
       </div>
     </div>
   </nav>
 
   <main class="container py-4">
 
-    <!-- ===================== SEARCH VIEW ===================== -->
-    <section id="viewSearch">
-      <div class="card card-soft rounded-4 shadow-sm border-0">
+    <!-- ===================== ROUTE VIEW: SEARCH ===================== -->
+    <section id="viewSearch" class="">
+      <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-3 p-md-4">
           <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
             <div>
-              <h5 class="fw-bold mb-1">Search Bus Tickets</h5>
-              <div class="small text-muted">Manual payment demo (no merchant gateway)</div>
+              <h5 class="fw-bold mb-0">Bus Tickets</h5>
+              <div class="small text-secondary">Easy Ticketing From Home</div>
             </div>
-            <div class="badge text-bg-light border" id="resultsCount">0 results</div>
+            <div class="small text-secondary mono" id="resultCountTop">0 results</div>
           </div>
 
           <hr class="my-3" />
 
-          <form id="searchForm" class="row g-2 align-items-end">
+          <form id="srchForm" class="row g-2 align-items-end">
             <div class="col-6 col-md-3">
               <label class="form-label small fw-semibold">From</label>
-              <select id="fromCity" class="form-select"></select>
+              <select id="srchFrom" class="form-select form-select-sm"></select>
             </div>
 
             <div class="col-6 col-md-3">
               <label class="form-label small fw-semibold">To</label>
-              <select id="toCity" class="form-select"></select>
+              <select id="srchTo" class="form-select form-select-sm"></select>
             </div>
 
             <div class="col-6 col-md-3">
               <label class="form-label small fw-semibold">Date</label>
-              <input id="journeyDate" type="date" class="form-control" />
+              <input id="srchDate" type="date" class="form-control form-control-sm" />
             </div>
 
             <div class="col-6 col-md-3 d-grid">
-              <button class="btn btn-primary" type="submit">Search</button>
+              <button class="btn btn-primary btn-sm" type="submit">Search</button>
             </div>
           </form>
         </div>
       </div>
 
-      <div class="mt-3" id="results"></div>
+      <div class="row g-3 mt-3">
+        <!-- Filters -->
+        <div class="col-lg-3">
+          <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-3">
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="fw-bold">Filters</div>
+                <button class="btn btn-link btn-sm text-decoration-none" type="button" id="resetFiltersBtn">Reset</button>
+              </div>
 
-      <!-- ===================== BOOKING PANEL ===================== -->
-      <div id="bookingPanel" class="card card-soft rounded-4 shadow-sm border-0 mt-3 d-none">
-        <div class="card-body p-3 p-md-4">
-          <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
-            <div>
-              <h5 class="fw-bold mb-0">Booking</h5>
-              <div class="small text-muted" id="bookingSubtitle">—</div>
-            </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-outline-secondary btn-sm" id="closeBookingBtn" type="button">Close</button>
-              <button class="btn btn-dark btn-sm" id="printPreviewBtn" type="button">Print Preview</button>
-            </div>
-          </div>
+              <div class="mt-3">
+                <div class="small fw-semibold">Operator</div>
+                <div id="filterOperators" class="filter-scroll mt-2"></div>
+              </div>
 
-          <hr class="my-3" />
-
-          <div class="alert alert-warning rounded-4 mb-3">
-            <div class="fw-semibold">Manual Payment (No Merchant)</div>
-            <div class="small">
-              Pay to: <span class="fw-bold mono" id="payToLabel">—</span> then enter your Txn/Ref ID.
-              Admin will verify and mark <b>PAID</b>.
-            </div>
-          </div>
-
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Boarding Point</label>
-              <select id="boardingPoint" class="form-select"></select>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Dropping Point</label>
-              <select id="droppingPoint" class="form-select"></select>
-            </div>
-
-            <div class="col-md-4">
-              <label class="form-label fw-semibold">Passenger Name <span class="text-danger">*</span></label>
-              <input id="passengerName" class="form-control" placeholder="Your name" />
-            </div>
-
-            <div class="col-md-4">
-              <label class="form-label fw-semibold">Mobile <span class="text-danger">*</span></label>
-              <input id="passengerPhone" class="form-control" placeholder="017XXXXXXXX" />
-            </div>
-
-            <div class="col-md-4">
-              <label class="form-label fw-semibold">Email (optional)</label>
-              <input id="passengerEmail" type="email" class="form-control" placeholder="name@gmail.com (optional)" />
-            </div>
-
-            <div class="col-md-4">
-              <label class="form-label fw-semibold">Payment Method</label>
-              <select id="paymentMethod" class="form-select">
-                <option value="bKash">bKash</option>
-                <option value="Nagad">Nagad</option>
-                <option value="Rocket">Rocket</option>
-              </select>
-            </div>
-
-            <div class="col-md-8">
-              <label class="form-label fw-semibold">Txn / Reference ID <span class="text-danger">*</span></label>
-              <input id="paymentRef" class="form-control" placeholder="Txn ID is required" />
-              <div class="small text-muted mt-1">Required for admin verification.</div>
-            </div>
-
-            <div class="col-12">
-              <div class="p-3 rounded-4 border card-soft">
-                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-                  <div class="fw-semibold">Seat Selection</div>
-                  <div class="small text-muted">
-                    Per seat: ৳<span class="mono fw-bold" id="perSeatFare">0</span> •
-                    Total: ৳<span class="mono fw-bold" id="totalFare">0</span>
-                  </div>
-                </div>
-                <div id="seatGrid" class="seat-grid mt-3"></div>
-                <div class="small text-muted mt-2">
-                  Selected: <span class="mono fw-bold" id="selectedSeatsText">-</span>
+              <div class="mt-3">
+                <div class="small fw-semibold">Coach Type</div>
+                <div class="d-flex gap-2 flex-wrap mt-2" id="filterCoach">
+                  <button type="button" class="btn btn-sm btn-outline-secondary filter-pill active" data-coach="ALL">All</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary filter-pill" data-coach="AC">AC</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary filter-pill" data-coach="Non-AC">Non-AC</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary filter-pill" data-coach="Sleeper">Sleeper</button>
                 </div>
               </div>
-            </div>
 
-            <div class="col-12 d-flex gap-2 flex-wrap">
-              <button class="btn btn-primary" id="submitPaymentBtn" type="button">Submit Payment Info</button>
-              <button class="btn btn-outline-secondary" id="resetSeatsBtn" type="button">Reset Seats</button>
+              <div class="mt-3">
+                <div class="small fw-semibold">Departure Time</div>
+                <div class="d-flex gap-2 flex-wrap mt-2" id="filterTime">
+                  <button type="button" class="btn btn-sm btn-outline-secondary filter-pill active" data-time="ALL">All</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary filter-pill" data-time="MORNING">Morning</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary filter-pill" data-time="AFTERNOON">Afternoon</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary filter-pill" data-time="EVENING">Evening</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary filter-pill" data-time="NIGHT">Night</button>
+                </div>
+              </div>
+
+              <div class="mt-3">
+                <div class="small fw-semibold">Max Price (৳)</div>
+                <input id="filterMaxPrice" class="form-range mt-2" type="range" min="200" max="2500" step="50" value="2500">
+                <div class="small text-secondary d-flex justify-content-between">
+                  <span>200</span><span class="mono">≤ ৳<span id="maxPriceLabel">2500</span></span>
+                </div>
+              </div>
+
+              <div class="mt-3">
+                <div class="small fw-semibold">Policy</div>
+                <div class="small text-secondary mt-1">
+                  Cancellation & reschedule rules apply. See “Policy” on each trip card.
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="col-lg-9">
+          <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-3 p-md-4">
+              <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                  <div class="fw-bold">Search Results</div>
+                  <span class="badge text-bg-light border" id="routeBadge">—</span>
+                  <span class="badge text-bg-light border" id="dateBadge">—</span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                  <div class="small text-secondary">Sort by</div>
+                  <select id="sortBy" class="form-select form-select-sm" style="width:auto">
+                    <option value="EARLIEST">Earliest</option>
+                    <option value="CHEAPEST">Cheapest</option>
+                    <option value="LATEST">Latest</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mt-3" id="resultList"></div>
+              <div class="text-secondary small mt-3" id="resultCountBottom">0 results</div>
+            </div>
+          </div>
+
+          <!-- Booking drawer (inline) -->
+          <div id="bookingPanel" class="card shadow-sm border-0 rounded-4 mt-3 d-none">
+            <div class="card-body p-3 p-md-4">
+              <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
+                <div>
+                  <h5 class="fw-bold mb-0">Booking</h5>
+                  <div class="small text-secondary" id="bkSub">-</div>
+                </div>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-outline-secondary btn-sm" id="bkCloseBtn">Close</button>
+                  <button class="btn btn-dark btn-sm" id="bkPrintBtn">Print</button>
+                </div>
+              </div>
+
+              <hr class="my-3" />
+
+              <div class="row g-4">
+                <div class="col-lg-7">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Departure Place (Boarding)</label>
+                      <select id="boardingPoint" class="form-select"></select>
+                      <div class="small text-secondary mt-1">Choose exact counter / stoppage.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Dropping Point</label>
+                      <select id="droppingPoint" class="form-select"></select>
+                      <div class="small text-secondary mt-1">Choose your destination counter.</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Passenger Name</label>
+                      <input id="passengerName" class="form-control" placeholder="e.g., Hasibul Polok" />
+                    </div>
+
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Mobile (BD)</label>
+                      <input id="passengerPhone" class="form-control" placeholder="017XXXXXXXX" />
+                    </div>
+
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Email (optional)</label>
+                      <input id="passengerEmail" type="email" class="form-control" placeholder="name@gmail.com (optional)" />
+                    </div>
+
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Payment Method</label>
+                      <select id="paymentMethod" class="form-select">
+                        <option>bKash</option>
+                        <option>Nagad</option>
+                        <option>Rocket</option>
+                        <option>Card</option>
+                        <option>Cash</option>
+                      </select>
+                    </div>
+
+                    <div class="col-12">
+                      <div class="p-3 bg-body rounded-4 border">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                          <div class="fw-semibold">Seat Layout</div>
+                          <div class="small text-secondary">
+                            Per seat: ৳<span class="mono fw-bold" id="perSeatFare">0</span> •
+                            Total: ৳<span class="mono fw-bold" id="totalFare">0</span>
+                          </div>
+                        </div>
+
+                        <div class="small text-secondary mt-1">
+                          Select seats (booked seats are disabled).
+                        </div>
+
+                        <div id="seatGrid" class="seat-grid mt-3"></div>
+
+                        <div class="small text-secondary mt-3">
+                          Selected: <span class="mono fw-bold" id="selectedSeatsText">-</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-12 d-flex gap-2 flex-wrap">
+                      <button class="btn btn-primary px-4" type="button" id="payConfirmBtn">Pay & Confirm</button>
+                      <button class="btn btn-outline-secondary" type="button" id="resetSeatsBtn">Reset Seats</button>
+                      <button class="btn btn-outline-dark ms-auto" type="button" id="bkPrintPreviewBtn">Print Preview</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-5">
+                  <div class="ticket rounded-4 border bg-body p-3">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                      <div class="fw-bold" id="pvBus">—</div>
+                      <span class="badge text-bg-dark mono" id="pvPNR">PNR: -</span>
+                    </div>
+                    <hr class="my-2" />
+
+                    <div class="row g-2 small">
+                      <div class="col-6 text-secondary">Route</div>
+                      <div class="col-6 text-end fw-semibold" id="pvRoute">-</div>
+
+                      <div class="col-6 text-secondary">Date</div>
+                      <div class="col-6 text-end fw-semibold" id="pvDate">-</div>
+
+                      <div class="col-6 text-secondary">Time</div>
+                      <div class="col-6 text-end fw-semibold mono" id="pvTime">-</div>
+
+                      <div class="col-6 text-secondary">Coach</div>
+                      <div class="col-6 text-end fw-semibold" id="pvCoach">-</div>
+
+                      <div class="col-6 text-secondary">Boarding</div>
+                      <div class="col-6 text-end fw-semibold" id="pvBoard">-</div>
+
+                      <div class="col-6 text-secondary">Dropping</div>
+                      <div class="col-6 text-end fw-semibold" id="pvDrop">-</div>
+
+                      <div class="col-6 text-secondary">Seats</div>
+                      <div class="col-6 text-end fw-semibold mono" id="pvSeats">-</div>
+
+                      <div class="col-6 text-secondary">Passenger</div>
+                      <div class="col-6 text-end fw-semibold" id="pvName">-</div>
+
+                      <div class="col-6 text-secondary">Phone</div>
+                      <div class="col-6 text-end fw-semibold mono" id="pvPhone">-</div>
+
+                      <div class="col-6 text-secondary">Discount</div>
+                      <div class="col-6 text-end fw-semibold mono">৳<span id="pvDiscount">0</span></div>
+
+                      <div class="col-6 text-secondary">Total</div>
+                      <div class="col-6 text-end fw-bold mono">৳<span id="pvTotal">0</span></div>
+                    </div>
+
+                    <hr class="my-3" />
+
+                    <div class="d-grid gap-2">
+                      <a id="btnEmail" class="btn btn-outline-primary d-none" href="#" target="_blank" rel="noopener">Send Email (Compose)</a>
+                      <a id="btnSms" class="btn btn-outline-success" href="#" target="_blank" rel="noopener">Send SMS (Compose)</a>
+                      <button id="btnTicketPrint" class="btn btn-dark" type="button">Print Ticket</button>
+                    </div>
+
+                    <div class="small text-secondary mt-2">
+                      Note: Email/SMS compose will open the user’s apps. Real sending needs backend.
+                    </div>
+                  </div>
+
+                  <div class="accordion mt-3" id="globalPolicyAcc">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#globalPolicy">
+                          Policy (Demo)
+                        </button>
+                      </h2>
+                      <div id="globalPolicy" class="accordion-collapse collapse" data-bs-parent="#globalPolicyAcc">
+                        <div class="accordion-body small">
+                          <ul class="mb-0">
+                            <li>Cancellation: up to 6 hours before departure (demo rule).</li>
+                            <li>Reschedule: once per ticket, service charge may apply (demo).</li>
+                            <li>No-show: ticket may be invalid after departure time.</li>
+                            <li>Discounts: admin can apply fixed or % discount.</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
             </div>
           </div>
 
         </div>
       </div>
-
     </section>
 
-    <!-- ===================== ADMIN VIEW ===================== -->
+    <!-- ===================== ROUTE VIEW: ADMIN ===================== -->
     <section id="viewAdmin" class="d-none">
-      <div class="card card-soft rounded-4 shadow-sm border-0">
+      <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body p-3 p-md-4">
-          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
             <div>
-              <h5 class="fw-bold mb-1">Admin Panel</h5>
-              <div class="small text-muted">Mark paid/unpaid/cancel + print</div>
+              <h5 class="fw-bold mb-0">Admin Panel</h5>
+              <div class="small text-secondary">Manage bookings (demo)</div>
             </div>
 
-            <div class="d-flex gap-2">
-              <button id="exportBtn" class="btn btn-outline-secondary btn-sm" type="button">Export JSON</button>
-              <button id="clearBtn" class="btn btn-outline-danger btn-sm" type="button">Clear All</button>
+            <div class="d-flex gap-2 flex-wrap">
+              <button id="exportBtn" class="btn btn-outline-secondary btn-sm">Export JSON</button>
+              <button id="clearAllBtn" class="btn btn-outline-danger btn-sm">Clear All</button>
             </div>
           </div>
 
           <hr class="my-3" />
 
           <div class="row g-2 align-items-end">
-            <div class="col-md-6">
+            <div class="col-md-3">
               <label class="form-label small fw-semibold">Search</label>
-              <input id="adminSearch" class="form-control" placeholder="PNR / phone / name" />
+              <input id="adminSearch" class="form-control form-control-sm" placeholder="PNR / phone / name / bus" />
             </div>
             <div class="col-md-3">
               <label class="form-label small fw-semibold">Status</label>
-              <select id="adminStatus" class="form-select">
+              <select id="adminStatus" class="form-select form-select-sm">
                 <option value="ALL">All</option>
-                <option value="UNPAID">UNPAID</option>
                 <option value="PAID">PAID</option>
+                <option value="UNPAID">UNPAID</option>
                 <option value="CANCELLED">CANCELLED</option>
               </select>
             </div>
-            <div class="col-md-3 d-grid">
-              <button id="refreshAdminBtn" class="btn btn-primary">Refresh</button>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Quick Discount</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text">৳</span>
+                <input id="adminQuickDiscount" class="form-control" type="number" min="0" value="0">
+                <button id="adminApplyDiscountBtn" class="btn btn-outline-primary" type="button">Apply to Selected</button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Select</label>
+              <div class="d-flex gap-2">
+                <button id="selectAllBtn" class="btn btn-outline-secondary btn-sm w-50" type="button">All</button>
+                <button id="selectNoneBtn" class="btn btn-outline-secondary btn-sm w-50" type="button">None</button>
+              </div>
             </div>
           </div>
 
           <div class="table-responsive mt-3">
             <table class="table table-sm align-middle">
               <thead>
-              <tr>
-                <th>PNR</th>
-                <th>Status</th>
-                <th>Route</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Bus</th>
-                <th>Seats</th>
-                <th>Total</th>
-                <th class="text-end">Action</th>
-              </tr>
+                <tr>
+                  <th style="width:34px;"></th>
+                  <th>PNR</th>
+                  <th>Status</th>
+                  <th>Bus</th>
+                  <th>Route</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Board → Drop</th>
+                  <th>Seats</th>
+                  <th>Total</th>
+                  <th class="text-end">Actions</th>
+                </tr>
               </thead>
-              <tbody id="adminTable"></tbody>
+              <tbody id="adminTableBody"></tbody>
             </table>
           </div>
-
         </div>
       </div>
     </section>
 
   </main>
 
+  <!-- Offcanvas: My bookings -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasBookings">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title fw-bold">My Bookings</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="myBookingsList" class="d-grid gap-3"></div>
+      <div class="text-secondary small mt-2">Saved in localStorage (demo).</div>
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div class="modal fade" id="paymentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Confirm Payment</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info rounded-4 mb-3">
+            Total Payable: <span class="mono fw-bold">৳<span id="payTotal">0</span></span>
+          </div>
+
+          <label class="form-label fw-semibold">Txn / Reference (optional)</label>
+          <input id="paymentRef" class="form-control" placeholder="e.g., TXN123456" />
+
+          <div class="small text-secondary mt-2">
+            Demo only. Real payment, email and sms sending needs backend.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button id="confirmPayBtn" class="btn btn-primary">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- After payment Modal -->
+  <div class="modal fade" id="afterPayModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Ticket Confirmed ✅</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-success rounded-4 mb-3">
+            PNR: <span class="mono fw-bold" id="afterPNR">-</span>
+          </div>
+          <div class="d-grid gap-2">
+            <button id="afterPrintBtn" class="btn btn-dark" type="button">Print Ticket</button>
+            <a id="afterSmsBtn" class="btn btn-outline-success" href="#" target="_blank" rel="noopener">Send SMS (Compose)</a>
+            <a id="afterEmailBtn" class="btn btn-outline-primary d-none" href="#" target="_blank" rel="noopener">Send Email (Compose)</a>
+          </div>
+          <div class="small text-secondary mt-2">
+            SMS/Email will open compose app. For real auto-send, build backend (SMS gateway + SMTP).
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" data-bs-dismiss="modal">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Edit/Reschedule Modal -->
+  <div class="modal fade" id="adminEditModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Admin: Edit Booking</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="adminEditPNR" />
+
+          <div class="row g-2">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Date</label>
+              <input id="adminEditDate" type="date" class="form-control" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Time</label>
+              <input id="adminEditTime" class="form-control" placeholder="e.g., 10:00 PM" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Status</label>
+              <select id="adminEditStatus" class="form-select">
+                <option>PAID</option>
+                <option>UNPAID</option>
+                <option>CANCELLED</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Discount</label>
+              <div class="input-group">
+                <span class="input-group-text">৳</span>
+                <input id="adminEditDiscount" type="number" min="0" class="form-control" />
+              </div>
+              <div class="small text-secondary mt-1">Fixed discount (৳). Total will update.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Admin Note</label>
+              <textarea id="adminEditNote" class="form-control" rows="2" placeholder="e.g., rescheduled by admin"></textarea>
+            </div>
+          </div>
+
+          <div class="small text-secondary mt-2">
+            Demo: data saved in localStorage.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+          <button id="adminSaveBtn" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="./app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
