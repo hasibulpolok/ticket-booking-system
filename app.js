@@ -1,11 +1,9 @@
 
-    // -----------------------------
-    // Demo Data
-    // -----------------------------
+// cities and time 
     const CITIES = ["Dhaka", "Chattogram", "Sylhet", "Rajshahi", "Khulna", "Barishal", "Rangpur", "Cox's Bazar"];
     const TIMES = ["07:00 AM", "09:00 AM", "12:00 PM", "03:00 PM", "06:00 PM", "09:00 PM", "11:30 PM"];
 
-    // Route base fares (per seat) in BDT (demo numbers)
+//    Routes 
     const ROUTE_FARES = {
       "Dhaka|Chattogram": 900,
       "Dhaka|Sylhet": 850,
@@ -38,9 +36,7 @@
     const RIGHT_SEATS = ["C", "D"];
     const STORAGE_KEY = "bd_ticket_bookings_v1";
 
-    // -----------------------------
-    // Helpers
-    // -----------------------------
+  
     const $ = (id) => document.getElementById(id);
 
     function todayISO(){
