@@ -1,6 +1,6 @@
 
 // cities and time 
-    const CITIES = ["Dhaka", "Chattogram", "Sylhet", "Rajshahi", "Khulna", "Barishal", "Rangpur", "Cox's Bazar"];
+    const CITIES = ["Dhaka", "Chattogram", "Sylhet", "Rajshahi", "Khulna", "Barishal", "Rangpur", "Cox's Bazar","Saidpur,","Nilphamari","Domar","Shibchar","Pacchor","Shibchar,Singapor Para"];
     const TIMES = ["07:00 AM", "09:00 AM", "12:00 PM", "03:00 PM", "06:00 PM", "09:00 PM", "11:30 PM"];
 
 //    Routes 
