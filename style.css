@@ -1,0 +1,44 @@
+<style>
+    :root{
+      --seat: 42px;
+    }
+    .seat-grid{
+      display: grid;
+      grid-template-columns: repeat(5, var(--seat));
+      gap: 10px;
+      justify-content: start;
+      align-items: center;
+    }
+    .seat{
+      width: var(--seat);
+      height: var(--seat);
+      border-radius: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid rgba(0,0,0,.15);
+      background: rgba(13,110,253,.07);
+    }
+    .seat:hover{ transform: translateY(-1px); }
+    .seat.selected{
+      background: rgba(25,135,84,.18);
+      border-color: rgba(25,135,84,.6);
+    }
+    .seat.booked{
+      background: rgba(220,53,69,.14);
+      border-color: rgba(220,53,69,.5);
+      cursor: not-allowed;
+      opacity: .9;
+    }
+    .aisle{
+      width: var(--seat);
+      height: var(--seat);
+      border-radius: 12px;
+      border: 1px dashed rgba(0,0,0,.15);
+      opacity: .35;
+    }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+  </style>
