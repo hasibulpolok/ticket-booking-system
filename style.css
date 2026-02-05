@@ -1,4 +1,4 @@
-<style>
+
     :root{
       --seat: 42px;
     }
@@ -41,4 +41,3 @@
       opacity: .35;
     }
     .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-  </style>
