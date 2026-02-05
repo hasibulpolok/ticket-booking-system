@@ -592,7 +592,7 @@ function printTicket(booking){
         <div><div class="k">Txn/Ref</div><div class="v mono">${booking.paymentRef || "N/A"}</div></div>
       </div>
 
-      <div class="footer">Please arrive 30 minutes early. Demo ticket (client-side).</div>
+      <div class="footer">Please arrive 30 minutes early. Demo ticket .</div>
     </div>
 
     <script> window.onload = () => window.print(); </script>
